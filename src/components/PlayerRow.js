@@ -2,6 +2,10 @@ import React, { useCallback, useMemo, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
+const noAutoComplete = (event) => {
+  event.target.setAttribute("autocomplete", "off");
+};
+
 const StyledScoreField = styled.input`
   font-size: 25px;
   text-align: center;
@@ -47,13 +51,11 @@ const PlayerRow = (props) => {
   }, [name, scores, setPlayerTotals]);
 
   const onScoreInput = useCallback((e) => {
-    const rawScore = Number(e.target.value);
     const [, round] = e.target.id.split(":");
 
     setScores((prevScores) => {
       const newScores = [...prevScores];
-      newScores[round] =
-        e.target.value === "" ? "" : (rawScore ?? prevScores[round]) || "";
+      newScores[round] = Number(e.target.value);
       return newScores;
     });
   }, []);
@@ -63,14 +65,14 @@ const PlayerRow = (props) => {
       _.times(numOfRounds, (i) => (
         <td>
           <StyledScoreField
-            autocomplete="off"
             id={`${name}:${i}`}
             onChange={onScoreInput}
-            value={scores[i]}
+            type={"number"}
+            onFocus={noAutoComplete}
           />
         </td>
       )),
-    [name, numOfRounds, onScoreInput, scores]
+    [name, numOfRounds, onScoreInput]
   );
 
   return (

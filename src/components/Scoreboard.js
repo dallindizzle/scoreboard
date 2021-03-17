@@ -21,6 +21,12 @@ const StyledTable = styled.table`
 
     border: 2px solid #635d5d;
   }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `;
 
 const StyledTableHeader = styled.th`
