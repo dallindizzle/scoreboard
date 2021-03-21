@@ -2,10 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
-const noAutoComplete = (event) => {
-  event.target.setAttribute("autocomplete", "off");
-};
-
 const StyledScoreField = styled.input`
   font-size: 25px;
   text-align: center;
@@ -33,8 +29,16 @@ const StyledRow = styled.tr`
   background-color: ${({ leading }) => (leading ? "#7abb71" : "white")};
 `;
 
+const NameCell = styled.td`
+  cursor: pointer;
+`;
+
+const noAutoComplete = (event) => {
+  event.target.setAttribute("autocomplete", "off");
+};
+
 const PlayerRow = (props) => {
-  const { name, numOfRounds, setPlayerTotals, leading } = props;
+  const { name, numOfRounds, setPlayerTotals, leading, removePlayer } = props;
 
   const [scores, setScores] = useState([]);
 
@@ -67,7 +71,7 @@ const PlayerRow = (props) => {
           <StyledScoreField
             id={`${name}:${i}`}
             onChange={onScoreInput}
-            type={"number"}
+            type="number"
             onFocus={noAutoComplete}
           />
         </td>
@@ -77,7 +81,7 @@ const PlayerRow = (props) => {
 
   return (
     <StyledRow leading={leading}>
-      <td>{name}</td>
+      <NameCell onClick={() => removePlayer(name)}>{name}</NameCell>
       {roundFields}
       <TotalScoreCell>{totalScore}</TotalScoreCell>
     </StyledRow>

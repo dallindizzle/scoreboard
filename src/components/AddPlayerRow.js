@@ -17,6 +17,10 @@ const StyledInputField = styled.input`
   }
 `;
 
+const StyledCell = styled.td`
+  background-color: #e9e5e5;
+`;
+
 const AddPlayerRow = (props) => {
   const { addPlayer } = props;
 
@@ -34,14 +38,14 @@ const AddPlayerRow = (props) => {
 
   return (
     <tr>
-      <td>
+      <StyledCell>
         <StyledInputField
           type={"text"}
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleEnter}
         />
-      </td>
+      </StyledCell>
     </tr>
   );
 };

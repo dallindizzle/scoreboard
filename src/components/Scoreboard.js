@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -30,8 +30,6 @@ const StyledTable = styled.table`
   }
 `;
 
-const defaultNames = ["Dad", "Mom", "Dallin", "Brandon", "Kortney", "Karli"];
-
 const StyledTableHeader = styled.th`
   padding: 8px;
   background-color: #be5564;
@@ -40,9 +38,10 @@ const StyledTableHeader = styled.th`
   border: 2px solid #635d5d;
 `;
 
-const Scoreboard = () => {
-  const [names, setNames] = useState([]);
+const defaultNames = ["Dad", "Mom", "Dallin", "Brandon", "Kortney", "Karli"];
 
+const Scoreboard = () => {
+  const [names, setNames] = useState(defaultNames);
   const [playerTotals, setPlayerTotals] = useState({});
 
   const leadingPlayer = useMemo(() => {
@@ -61,6 +60,22 @@ const Scoreboard = () => {
     [names.length]
   );
 
+  // TODO: give players an ID value instead of using their names to add/remove
+
+  const removePlayer = useCallback((name) => {
+    setNames((prevNames) => {
+      return prevNames.filter((player) => player !== name);
+    });
+  }, []);
+
+  const addPlayer = useCallback((name) => {
+    setNames((prevNames) => {
+      const newNames = [...prevNames];
+      newNames.push(name);
+      return newNames;
+    });
+  }, []);
+
   const playerRows = useMemo(
     () =>
       names.map((name) => (
@@ -70,18 +85,11 @@ const Scoreboard = () => {
           setPlayerTotals={setPlayerTotals}
           leading={leadingPlayer === name}
           key={name}
+          removePlayer={removePlayer}
         />
       )),
-    [leadingPlayer, names]
+    [leadingPlayer, names, removePlayer]
   );
-
-  const addPlayer = useCallback((name) => {
-    setNames((prevNames) => {
-      const newNames = [...prevNames];
-      newNames.push(name);
-      return newNames;
-    });
-  }, []);
 
   return (
     <StyledTable>
