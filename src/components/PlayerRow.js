@@ -42,13 +42,24 @@ const noAutoComplete = (event) => {
 };
 
 const PlayerRow = (props) => {
-  const { name, numOfRounds, setPlayerTotals, leading, removePlayer } = props;
+  const {
+    name,
+    numOfRounds,
+    setPlayerTotals,
+    leading,
+    removePlayer,
+    focusNextScore,
+  } = props;
 
   const [scores, setScores] = useState([]);
 
   const totalScore = useMemo(() => {
     if (scores.length > 0) {
-      const total = scores.reduce((acc, s) => acc + s, 0);
+      const total = scores.reduce((acc, s) => {
+        const score = Number(s) || 0;
+        return acc + score;
+      }, 0);
+
       setPlayerTotals((oldTotals) => {
         const newTotals = { ...oldTotals };
         newTotals[name] = total;
@@ -58,7 +69,24 @@ const PlayerRow = (props) => {
     }
   }, [name, scores, setPlayerTotals]);
 
-  const onScoreInput = useCallback((e) => {
+  const onScoreEnter = useCallback(
+    (e) => {
+      if (e.key === "Enter") {
+        const [player, round] = e.target.id.split(":");
+
+        setScores((prevScores) => {
+          const newScores = [...prevScores];
+          newScores[round] = Number(e.target.value);
+          return newScores;
+        });
+
+        focusNextScore(player, Number(round));
+      }
+    },
+    [focusNextScore]
+  );
+
+  const onBlur = useCallback((e) => {
     const [, round] = e.target.id.split(":");
 
     setScores((prevScores) => {
@@ -74,13 +102,14 @@ const PlayerRow = (props) => {
         <td>
           <StyledScoreField
             id={`${name}:${i}`}
-            onChange={onScoreInput}
+            onKeyDown={onScoreEnter}
+            onBlur={onBlur}
             type="number"
             onFocus={noAutoComplete}
           />
         </td>
       )),
-    [name, numOfRounds, onScoreInput]
+    [name, numOfRounds, onBlur, onScoreEnter]
   );
 
   return (

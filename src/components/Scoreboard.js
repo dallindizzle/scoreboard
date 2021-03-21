@@ -44,12 +44,36 @@ const Scoreboard = () => {
   const [names, setNames] = useState(defaultNames);
   const [playerTotals, setPlayerTotals] = useState({});
 
-  const leadingPlayer = useMemo(() => {
+  const focusNextScore = useCallback(
+    (player, round) => {
+      const indexOfNextPlayer = names.indexOf(player) + 1;
+      if (indexOfNextPlayer < names.length) {
+        const nextPlayer = names[indexOfNextPlayer];
+        document.getElementById(`${nextPlayer}:${round}`).focus();
+      } else if (round < names.length - 1) {
+        const nextPlayer = names[0];
+        document.getElementById(`${nextPlayer}:${round + 1}`).focus();
+      } else {
+        document.getElementById(`${player}:${round}`).blur();
+      }
+    },
+    [names]
+  );
+
+  const leadingPlayers = useMemo(() => {
     if (Object.keys(playerTotals).length > 0) {
-      return Object.keys(playerTotals).reduce((a, b) =>
-        playerTotals[a] < playerTotals[b] ? a : b
+      const sortedNames = Object.keys(playerTotals).sort(
+        (a, b) => playerTotals[a] - playerTotals[b]
       );
+
+      // There can be multiple leading players so find each of them
+      const highestScore = playerTotals[sortedNames[0]];
+      return sortedNames.reduce((acc, player) => {
+        if (playerTotals[player] === highestScore) acc.push(player);
+        return acc;
+      }, []);
     }
+    return [];
   }, [playerTotals]);
 
   const roundHeaders = useMemo(
@@ -75,12 +99,13 @@ const Scoreboard = () => {
           name={name}
           numOfRounds={names.length}
           setPlayerTotals={setPlayerTotals}
-          leading={leadingPlayer === name}
+          leading={leadingPlayers.includes(name)}
           key={name}
           removePlayer={removePlayer}
+          focusNextScore={focusNextScore}
         />
       )),
-    [leadingPlayer, names, removePlayer]
+    [focusNextScore, leadingPlayers, names, removePlayer]
   );
 
   return (
