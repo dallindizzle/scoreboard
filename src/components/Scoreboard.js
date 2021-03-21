@@ -16,9 +16,12 @@ const StyledTable = styled.table`
   font-family: Arial, serif;
 
   td,
+  tr,
   th {
     width: 100px;
     height: 75px;
+
+    padding: 5px;
 
     border: 2px solid #635d5d;
   }
@@ -31,11 +34,8 @@ const StyledTable = styled.table`
 `;
 
 const StyledTableHeader = styled.th`
-  padding: 8px;
   background-color: #be5564;
   color: white;
-
-  border: 2px solid #635d5d;
 `;
 
 const defaultNames = ["Dad", "Mom", "Dallin", "Brandon", "Kortney", "Karli"];
@@ -65,7 +65,7 @@ const Scoreboard = () => {
   }, []);
 
   const addPlayer = useCallback((name) => {
-    setNames((prevNames) => [...new Set([...prevNames, name])]);
+    name && setNames((prevNames) => [...new Set([...prevNames, name])]);
   }, []);
 
   const playerRows = useMemo(
