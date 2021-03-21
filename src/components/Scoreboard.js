@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
 import PlayerRow from "./PlayerRow";
+import AddPlayerRow from "./AddPlayerRow";
 
 const StyledTable = styled.table`
   margin: 50px auto 50px auto;
@@ -29,6 +30,8 @@ const StyledTable = styled.table`
   }
 `;
 
+const defaultNames = ["Dad", "Mom", "Dallin", "Brandon", "Kortney", "Karli"];
+
 const StyledTableHeader = styled.th`
   padding: 8px;
   background-color: #be5564;
@@ -37,8 +40,8 @@ const StyledTableHeader = styled.th`
   border: 2px solid #635d5d;
 `;
 
-const Scoreboard = (props) => {
-  const { names } = props;
+const Scoreboard = () => {
+  const [names, setNames] = useState([]);
 
   const [playerTotals, setPlayerTotals] = useState({});
 
@@ -72,6 +75,14 @@ const Scoreboard = (props) => {
     [leadingPlayer, names]
   );
 
+  const addPlayer = useCallback((name) => {
+    setNames((prevNames) => {
+      const newNames = [...prevNames];
+      newNames.push(name);
+      return newNames;
+    });
+  }, []);
+
   return (
     <StyledTable>
       <tbody>
@@ -81,6 +92,7 @@ const Scoreboard = (props) => {
           <StyledTableHeader>Total</StyledTableHeader>
         </tr>
         {playerRows}
+        <AddPlayerRow addPlayer={addPlayer} />
       </tbody>
     </StyledTable>
   );
