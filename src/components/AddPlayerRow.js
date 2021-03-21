@@ -18,7 +18,7 @@ const StyledInputField = styled.input`
 `;
 
 const StyledCell = styled.td`
-  background-color: #e9e5e5;
+  background-color: #dde8d8;
 `;
 
 const AddPlayerRow = (props) => {

@@ -31,6 +31,10 @@ const StyledRow = styled.tr`
 
 const NameCell = styled.td`
   cursor: pointer;
+
+  &:hover {
+    background-color: #eeaeae;
+  }
 `;
 
 const noAutoComplete = (event) => {

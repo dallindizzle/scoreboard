@@ -60,20 +60,12 @@ const Scoreboard = () => {
     [names.length]
   );
 
-  // TODO: give players an ID value instead of using their names to add/remove
-
   const removePlayer = useCallback((name) => {
-    setNames((prevNames) => {
-      return prevNames.filter((player) => player !== name);
-    });
+    setNames((prevNames) => prevNames.filter((player) => player !== name));
   }, []);
 
   const addPlayer = useCallback((name) => {
-    setNames((prevNames) => {
-      const newNames = [...prevNames];
-      newNames.push(name);
-      return newNames;
-    });
+    setNames((prevNames) => [...new Set([...prevNames, name])]);
   }, []);
 
   const playerRows = useMemo(
