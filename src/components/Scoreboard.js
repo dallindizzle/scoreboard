@@ -68,10 +68,16 @@ const Scoreboard = () => {
 
       // There can be multiple leading players so find each of them
       const highestScore = playerTotals[sortedNames[0]];
-      return sortedNames.reduce((acc, player) => {
-        if (playerTotals[player] === highestScore) acc.push(player);
-        return acc;
-      }, []);
+      const leadingPlayers = [];
+      sortedNames.every((player) => {
+        if (playerTotals[player] === highestScore) {
+          leadingPlayers.push(player);
+          return true;
+        } else {
+          return false;
+        }
+      });
+      return leadingPlayers;
     }
     return [];
   }, [playerTotals]);
