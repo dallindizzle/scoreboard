@@ -1,0 +1,1 @@
+export const ROUND_WIN_DEDUCTION = -5;
