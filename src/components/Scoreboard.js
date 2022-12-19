@@ -60,24 +60,29 @@ const Scoreboard = () => {
     [names]
   );
 
-  const leadingPlayers = useMemo(() => {
+  const playerPlacements = useMemo(() => {
     if (Object.keys(playerTotals).length > 0) {
-      const sortedNames = Object.keys(playerTotals).sort(
-        (a, b) => playerTotals[a] - playerTotals[b]
-      );
+      const placements = {};
 
-      // There can be multiple leading players so find each of them
-      const highestScore = playerTotals[sortedNames[0]];
-      const leadingPlayers = [];
-      sortedNames.every((player) => {
-        if (playerTotals[player] === highestScore) {
-          leadingPlayers.push(player);
-          return true;
+      const topThreeScores = [...new Set(Object.values(playerTotals))]
+        .sort((a, b) => a - b)
+        .splice(0, 3);
+      const playersWithScores = Object.keys(playerTotals);
+
+      playersWithScores.forEach((name) => {
+        const score = playerTotals[name];
+        if (score === topThreeScores[0]) {
+          placements[name] = "first";
+        } else if (score === topThreeScores[1]) {
+          placements[name] = "second";
+        } else if (score === topThreeScores[2]) {
+          placements[name] = "third";
         } else {
-          return false;
+          placements[name] = "loser";
         }
       });
-      return leadingPlayers;
+
+      return placements;
     }
     return [];
   }, [playerTotals]);
@@ -105,13 +110,13 @@ const Scoreboard = () => {
           name={name}
           numOfRounds={names.length}
           setPlayerTotals={setPlayerTotals}
-          leading={leadingPlayers.includes(name)}
+          placement={playerPlacements[name]}
           key={name}
           removePlayer={removePlayer}
           focusNextScore={focusNextScore}
         />
       )),
-    [focusNextScore, leadingPlayers, names, removePlayer]
+    [focusNextScore, names, playerPlacements, removePlayer]
   );
 
   return (

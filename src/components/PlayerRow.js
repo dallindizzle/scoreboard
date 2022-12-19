@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import _ from "lodash";
 import styled from "styled-components";
 
@@ -15,7 +21,7 @@ const StyledScoreField = styled.input`
 
   background-color: transparent;
 
-  color: ${({ value }) => (value === "W" ? "#EEBC1D" : "black")};
+  color: ${({ value }) => (value === "W" ? "#00FF00" : "black")};
 
   &:focus {
     outline: none;
@@ -30,7 +36,14 @@ const TotalScoreCell = styled.td`
 const StyledRow = styled.tr`
   transition: background 500ms ease;
 
-  background-color: ${({ leading }) => (leading ? "#7abb71" : "white")};
+  background-color: ${({ placement }) =>
+    placement === "first"
+      ? "gold"
+      : placement === "second"
+      ? "#C0C0C0"
+      : placement === "third"
+      ? "#CD7F32"
+      : "white"};
 `;
 
 const NameCell = styled.td`
@@ -50,46 +63,52 @@ const PlayerRow = (props) => {
     name,
     numOfRounds,
     setPlayerTotals,
-    leading,
+    placement,
     removePlayer,
     focusNextScore,
   } = props;
 
   const [scores, setScores] = useState(() => Array(numOfRounds).fill(""));
+  const [total, setTotal] = useState(0);
+  const mount = useRef(false);
 
-  const totalScore = useMemo(() => {
-    if (scores.length > 0) {
-      if (scores.every((score) => score === "")) {
-        return 0;
-      }
-
-      const total = scores.reduce((acc, s) => {
+  useEffect(() => {
+    if (!mount.current) {
+      mount.current = true;
+    } else {
+      const totalScore = scores.reduce((acc, s) => {
         const score = s === "W" ? ROUND_WIN_DEDUCTION : Number(s) || 0;
         return acc + score;
       }, 0);
 
+      setTotal(totalScore);
+
       setPlayerTotals((oldTotals) => {
         const newTotals = { ...oldTotals };
-        newTotals[name] = total;
+        newTotals[name] = totalScore;
         return newTotals;
       });
-      return total;
     }
   }, [name, scores, setPlayerTotals]);
 
   const onChange = useCallback((e) => {
     const [, round] = e.target.id.split(":");
+    const input = e.target.value;
+    let newScore = null;
 
-    const score =
-      e.target.value === "w" || e.target.value === "W"
-        ? "W"
-        : isNaN(e.target.value)
-        ? ""
-        : Number(e.target.value);
+    if (input === "w" || input === "W") {
+      newScore = "W";
+    } else if (input === "") {
+      newScore = "";
+    } else if (!isNaN(input)) {
+      newScore = Number(input);
+    } else {
+      return;
+    }
 
     setScores((prevScores) => {
       const newScores = [...prevScores];
-      newScores[round] = score;
+      newScores[round] = newScore;
       return newScores;
     });
   }, []);
@@ -98,13 +117,10 @@ const PlayerRow = (props) => {
     (e) => {
       if (e.key === "Enter") {
         const [player, round] = e.target.id.split(":");
-
-        onChange(e);
-
         focusNextScore(player, Number(round));
       }
     },
-    [focusNextScore, onChange]
+    [focusNextScore]
   );
 
   const roundFields = useMemo(
@@ -114,10 +130,8 @@ const PlayerRow = (props) => {
           <StyledScoreField
             id={`${name}:${i}`}
             onKeyDown={onScoreEnter}
-            // onBlur={onBlur}
             onChange={onChange}
             value={scores[i]}
-            // type="number"
             onFocus={noAutoComplete}
             key={`${name}:${i}`}
           />
@@ -127,10 +141,10 @@ const PlayerRow = (props) => {
   );
 
   return (
-    <StyledRow leading={leading}>
+    <StyledRow placement={placement}>
       <NameCell onClick={() => removePlayer(name)}>{name}</NameCell>
       {roundFields}
-      <TotalScoreCell>{totalScore}</TotalScoreCell>
+      <TotalScoreCell>{total}</TotalScoreCell>
     </StyledRow>
   );
 };
