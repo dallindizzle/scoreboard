@@ -21,7 +21,7 @@ const StyledTable = styled.table`
     width: 100px;
     height: 75px;
 
-    padding: 5px;
+    padding: 8px;
 
     border: 2px solid #635d5d;
   }
@@ -33,9 +33,8 @@ const StyledTable = styled.table`
   }
 `;
 
-const StyledTableHeader = styled.th`
-  background-color: #be5564;
-  color: white;
+const TableHeaderCell = styled.th`
+  font-weight: 600;
 `;
 
 const defaultNames = ["Dad", "Mom", "Dallin", "Brandon", "Kortney", "Karli"];
@@ -90,7 +89,7 @@ const Scoreboard = () => {
   const roundHeaders = useMemo(
     () =>
       _.times(names.length, (i) => (
-        <StyledTableHeader key={i}>{i + 1}</StyledTableHeader>
+        <TableHeaderCell key={i}>{i + 1}</TableHeaderCell>
       )),
     [names.length]
   );
@@ -123,9 +122,9 @@ const Scoreboard = () => {
     <StyledTable>
       <tbody>
         <tr>
-          <StyledTableHeader>Name</StyledTableHeader>
+          <TableHeaderCell>Name</TableHeaderCell>
           {roundHeaders}
-          <StyledTableHeader>Total</StyledTableHeader>
+          <TableHeaderCell>Total</TableHeaderCell>
         </tr>
         {playerRows}
         <AddPlayerRow addPlayer={addPlayer} />

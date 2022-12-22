@@ -29,8 +29,7 @@ const StyledScoreField = styled.input`
 `;
 
 const TotalScoreCell = styled.td`
-  font-size: 30px;
-  font-weight: bold;
+  font-weight: 600;
 `;
 
 const StyledRow = styled.tr`
