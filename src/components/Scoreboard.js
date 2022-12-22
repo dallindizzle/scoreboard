@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 import PlayerRow from "./PlayerRow";
 import AddPlayerRow from "./AddPlayerRow";
+import { DEFAULT_NAMES, PLACEMENTS } from "../constants";
 
 const StyledTable = styled.table`
   margin: 50px auto 50px auto;
@@ -37,10 +38,8 @@ const TableHeaderCell = styled.th`
   font-weight: 600;
 `;
 
-const defaultNames = ["Dad", "Mom", "Dallin", "Brandon", "Kortney", "Karli"];
-
 const Scoreboard = () => {
-  const [names, setNames] = useState(defaultNames);
+  const [names, setNames] = useState([...DEFAULT_NAMES]);
   const [playerTotals, setPlayerTotals] = useState({});
 
   const focusNextScore = useCallback(
@@ -71,15 +70,18 @@ const Scoreboard = () => {
       playersWithScores.forEach((name) => {
         const score = playerTotals[name];
         if (score === topThreeScores[0]) {
-          placements[name] = "first";
+          placements[name] = PLACEMENTS.FIRST;
         } else if (score === topThreeScores[1]) {
-          placements[name] = "second";
+          placements[name] = PLACEMENTS.SECOND;
         } else if (score === topThreeScores[2]) {
-          placements[name] = "third";
+          placements[name] = PLACEMENTS.THIRD;
         } else {
           placements[name] = "loser";
         }
       });
+
+      // just in case
+      window.localStorage.setItem("scores", JSON.stringify(playerTotals));
 
       return placements;
     }

@@ -8,7 +8,7 @@ import React, {
 import _ from "lodash";
 import styled from "styled-components";
 
-import { ROUND_WIN_DEDUCTION } from "../constants";
+import { PLACEMENTS, ROUND_WIN_DEDUCTION } from "../constants";
 
 const StyledScoreField = styled.input`
   font-size: 25px;
@@ -21,7 +21,7 @@ const StyledScoreField = styled.input`
 
   background-color: transparent;
 
-  color: ${({ value }) => (value === "W" ? "#00FF00" : "black")};
+  color: ${({ value }) => (value === "W" ? "#3cb371" : "black")};
 
   &:focus {
     outline: none;
@@ -36,12 +36,12 @@ const StyledRow = styled.tr`
   transition: background 500ms ease;
 
   background-color: ${({ placement }) =>
-    placement === "first"
+    placement === PLACEMENTS.FIRST
       ? "gold"
-      : placement === "second"
-      ? "#C0C0C0"
-      : placement === "third"
-      ? "#CD7F32"
+      : placement === PLACEMENTS.SECOND
+      ? "#dcdcdc"
+      : placement === PLACEMENTS.THIRD
+      ? "#f4a460"
       : "white"};
 `;
 
@@ -139,9 +139,15 @@ const PlayerRow = (props) => {
     [name, numOfRounds, onChange, onScoreEnter, scores]
   );
 
+  const askRemovePlayer = (name) => {
+    if (window.confirm(`Are you sure you want to remove ${name}?`)) {
+      removePlayer(name);
+    }
+  };
+
   return (
     <StyledRow placement={placement}>
-      <NameCell onClick={() => removePlayer(name)}>{name}</NameCell>
+      <NameCell onClick={() => askRemovePlayer(name)}>{name}</NameCell>
       {roundFields}
       <TotalScoreCell>{total}</TotalScoreCell>
     </StyledRow>
