@@ -24,7 +24,7 @@ const StyledTable = styled.table`
 
     padding: 8px;
 
-    border: 2px solid #635d5d;
+    border: 2px solid black;
   }
 
   input::-webkit-outer-spin-button,
